@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ร้านขายยาสระผมสมุนไพร & ระบบจัดการออเดอร์</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-area { border: 2px solid #000; padding: 20px; width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-emerald-600 text-white p-4 shadow-md no-print">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">🌿 Herbal Care Shampoo</h1>
+      <div class="space-x-2">
+        <button onclick="switchTab('shop')" class="bg-white text-emerald-700 px-4 py-1.5 rounded-lg font-semibold">หน้าร้านค้า (ลูกค้า)</button>
+        <button onclick="switchTab('warehouse')" class="bg-emerald-700 hover:bg-emerald-800 px-4 py-1.5 rounded-lg font-semibold">ระบบคลังสินค้า (หยิบ & แพ็ค)</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 1. หน้า Landing Page ขายสินค้า -->
+  <div id="tab-shop" class="max-w-5xl mx-auto p-6 no-print">
+    <div class="bg-emerald-100 rounded-2xl p-8 mb-8 text-center">
+      <h2 class="text-3xl font-bold text-emerald-900 mb-2">ยาสระผมสมุนไพรแท้ ลดผมร่วง บำรุงรากผม</h2>
+      <p class="text-emerald-700">เลือกสูตรที่ใช่สำหรับเส้นผมของคุณ จัดส่งรวดเร็วทั่วประเทศ</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-10">
+      <!-- SKU 01 -->
+      <div class="bg-white rounded-xl shadow p-5 border border-gray-100 flex flex-col justify-between">
+        <div>
+          <img src="images/sku01.jpg" onerror="this.src='https://placehold.co/400x300/10b981/white?text=SKU-01+Anti-Hair+Fall'" alt="SKU-01" class="w-full h-56 object-cover rounded-lg mb-4">
+          <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded font-semibold">SKU: SHP-001</span>
+          <h3 class="text-xl font-bold mt-2">สูตรมะกรูด & ขิง (ลดผมขาดหลุดร่วง)</h3>
+          <p class="text-gray-500 text-sm mt-1">ขนาด 300 ml. ช่วยกระตุ้นการเกิดใหม่ของเส้นผม ลดความมันบนหนังศีรษะ</p>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+          <span class="text-2xl font-bold text-emerald-600">฿250</span>
+          <button onclick="selectProduct('SHP-001', 'แชมพูสูตรมะกรูดและขิง', 250)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">เลือกสั่งซื้อสูตรนี้</button>
+        </div>
+      </div>
+
+      <!-- SKU 02 -->
+      <div class="bg-white rounded-xl shadow p-5 border border-gray-100 flex flex-col justify-between">
+        <div>
+          <img src="images/sku02.jpg" onerror="this.src='https://placehold.co/400x300/059669/white?text=SKU-02+Silky+Smooth'" alt="SKU-02" class="w-full h-56 object-cover rounded-lg mb-4">
+          <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded font-semibold">SKU: SHP-002</span>
+          <h3 class="text-xl font-bold mt-2">สูตรอัญชัน & น้ำมันมะพร้าว (ผมนุ่มเงางาม)</h3>
+          <p class="text-gray-500 text-sm mt-1">ขนาด 300 ml. ฟื้นฟูผมแห้งเสียแตกปลาย ให้ผมดกดำมีน้ำหนัก</p>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+          <span class="text-2xl font-bold text-emerald-600">฿290</span>
+          <button onclick="selectProduct('SHP-002', 'แชมพูสูตรอัญชันและน้ำมันมะพร้าว', 290)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">เลือกสั่งซื้อสูตรนี้</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ฟอร์มสั่งซื้อ -->
+    <div id="order-form-section" class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-emerald-600">
+      <h3 class="text-xl font-bold mb-4">📝 ฟอร์มสั่งซื้อสินค้า</h3>
+      <form id="orderForm" class="space-y-4">
+        <div class="grid md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">รหัสสินค้า (SKU)</label>
+            <input type="text" id="sku" readonly value="SHP-001" class="w-full bg-gray-100 border rounded-lg p-2.5 font-bold">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">ชื่อสินค้า</label>
+            <input type="text" id="productName" readonly value="แชมพูสูตรมะกรูดและขิง" class="w-full bg-gray-100 border rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">จำนวน (ขวด)</label>
+            <input type="number" id="qty" min="1" value="1" required class="w-full border rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-1">ชื่อ-นามสกุล ผู้รับ</label>
+            <input type="text" id="customerName" required placeholder="เช่น นายสมชาย ใจดี" class="w-full border rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-1">เบอร์โทรศัพท์</label>
+            <input type="tel" id="phone" required placeholder="เช่น 0812345678" class="w-full border rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">ที่อยู่จัดส่ง (พร้อมรหัสไปรษณีย์)</label>
+          <textarea id="address" rows="2" required placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์" class="w-full border rounded-lg p-2.5"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg text-lg transition">
+          ยืนยันการสั่งซื้อ
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. หน้าคลังสินค้า (หยิบ & แพ็ค & จ่าหน้าพัสดุ) -->
+  <div id="tab-warehouse" class="max-w-5xl mx-auto p-6 hidden">
+    <div class="flex flex-wrap justify-between items-center gap-3 mb-6 no-print">
+      <div>
+        <h2 class="text-2xl font-bold">📦 ระบบจัดการคำสั่งซื้อ (Picking & Packing)</h2>
+        <p class="text-gray-500 text-sm">จัดการออเดอร์ หยิบสินค้า และพิมพ์ใบจ่าหน้าพัสดุ</p>
+      </div>
+      <button onclick="exportCSV()" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg font-semibold">📥 ดาวน์โหลดตาราง (Excel/CSV)</button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow overflow-x-auto mb-8 no-print">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-100 border-b text-sm">
+            <th class="p-3">Order ID</th>
+            <th class="p-3">ลูกค้า</th>
+            <th class="p-3">SKU / สินค้า</th>
+            <th class="p-3">จำนวน</th>
+            <th class="p-3">ยอดรวม</th>
+            <th class="p-3 text-center">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody" class="divide-y text-sm"></tbody>
+      </table>
+    </div>
+
+    <!-- ใบหยิบสินค้าและใบจ่าหน้าพัสดุ -->
+    <div id="packingArea" class="hidden bg-white p-6 rounded-xl shadow-lg border-2 border-dashed border-gray-400 print-area">
+      <div class="flex justify-between items-center border-b pb-4 mb-4">
+        <h3 class="text-xl font-bold">📋 ใบหยิบสินค้า (Picking List) & ใบจ่าหน้าพัสดุ</h3>
+        <button onclick="window.print()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm no-print">🖨️ พิมพ์ใบปะหน้า</button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+          <h4 class="font-bold text-yellow-900 mb-2">1. รายการหยิบสินค้า (Picking)</h4>
+          <p class="text-sm"><strong>เลขที่ออเดอร์:</strong> <span id="pack-orderId"></span></p>
+          <p class="text-sm"><strong>รหัส SKU:</strong> <span id="pack-sku" class="font-mono font-bold text-red-600"></span></p>
+          <p class="text-sm"><strong>ชื่อสินค้า:</strong> <span id="pack-product"></span></p>
+          <p class="text-lg font-bold mt-2">จำนวนที่ต้องหยิบ: <span id="pack-qty" class="text-blue-700"></span> ขวด</p>
+          <div class="mt-3 pt-2 border-t border-yellow-200 text-xs text-gray-600">
+            <label class="flex items-center space-x-2"><input type="checkbox" class="w-4 h-4"> <span>ตรวจสอบสภาพขวดและฝาปิดเรียบร้อย</span></label>
+            <label class="flex items-center space-x-2 mt-1"><input type="checkbox" class="w-4 h-4"> <span>ห่อบับเบิ้ลกันกระแทกเรียบร้อย</span></label>
+          </div>
+        </div>
+
+        <div class="border-2 border-black p-4 rounded-lg">
+          <div class="border-b border-black pb-2 mb-2 text-xs">
+            <strong>ผู้ส่ง (SENDER):</strong> ร้าน Herbal Care Shampoo<br>
+            123 ถ.พหลโยธิน แขวงเสนานิคม เขตจตุจักร กทม. 10900 โทร. 02-999-9999
+          </div>
+          <div class="pt-1">
+            <span class="bg-black text-white text-xs px-2 py-0.5 font-bold">ผู้รับ (RECEIVER)</span>
+            <p class="text-lg font-bold mt-1" id="pack-name"></p>
+            <p class="text-sm font-semibold" id="pack-phone"></p>
+            <p class="text-sm mt-1 leading-relaxed" id="pack-address"></p>
+          </div>
+          <div class="mt-4 pt-2 border-t border-dashed border-gray-400 flex justify-between items-center text-xs">
+            <span>Ref: <strong id="pack-ref"></strong></span>
+            <span class="font-bold">ชำระเงินแล้ว (PAID)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPrice = 250;
+    // ข้อมูลตัวอย่างเริ่มต้น เพื่อให้กดดูใบหยิบของและใบจ่าหน้าได้ทันที
+    let orders = JSON.parse(localStorage.getItem('shampoo_orders')) || [
+      {
+        OrderID: "ORD-100001",
+        Timestamp: new Date().toLocaleString("th-TH"),
+        CustomerName: "สมหญิง รักสวย (ตัวอย่าง)",
+        Phone: "0891234567",
+        Address: "99/1 ซ.พหลโยธิน 34 แขวงเสนานิคม เขตจตุจักร กรุงเทพฯ 10900",
+        SKU: "SHP-001",
+        ProductName: "แชมพูสูตรมะกรูดและขิง",
+        Qty: 2,
+        TotalPrice: 500
+      }
+    ];
+
+    function switchTab(tab) {
+      document.getElementById('tab-shop').classList.toggle('hidden', tab !== 'shop');
+      document.getElementById('tab-warehouse').classList.toggle('hidden', tab !== 'warehouse');
+      if (tab === 'warehouse') renderOrders();
+    }
+
+    function selectProduct(sku, name, price) {
+      document.getElementById('sku').value = sku;
+      document.getElementById('productName').value = name;
+      currentPrice = price;
+      document.getElementById('order-form-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const qty = parseInt(document.getElementById('qty').value);
+      const newOrder = {
+        OrderID: "ORD-" + Math.floor(100000 + Math.random() * 900000),
+        Timestamp: new Date().toLocaleString("th-TH"),
+        CustomerName: document.getElementById('customerName').value,
+        Phone: document.getElementById('phone').value,
+        Address: document.getElementById('address').value,
+        SKU: document.getElementById('sku').value,
+        ProductName: document.getElementById('productName').value,
+        Qty: qty,
+        TotalPrice: qty * currentPrice
+      };
+
+      orders.unshift(newOrder);
+      localStorage.setItem('shampoo_orders', JSON.stringify(orders));
+      alert("✅ สั่งซื้อสำเร็จ! เลขที่ออเดอร์: " + newOrder.OrderID);
+      document.getElementById('orderForm').reset();
+      selectProduct('SHP-001', 'แชมพูสูตรมะกรูดและขิง', 250);
+    });
+
+    function renderOrders() {
+      const tbody = document.getElementById('ordersTableBody');
+      tbody.innerHTML = orders.map((order, index) => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-mono font-bold text-emerald-700">${order.OrderID}</td>
+          <td class="p-3">${order.CustomerName}<br><span class="text-xs text-gray-400">${order.Phone}</span></td>
+          <td class="p-3"><span class="font-bold">${order.SKU}</span> - ${order.ProductName}</td>
+          <td class="p-3 font-bold">${order.Qty}</td>
+          <td class="p-3">฿${order.TotalPrice}</td>
+          <td class="p-3 text-center">
+            <button onclick="preparePack(${index})" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded text-xs font-semibold">
+              📦 หยิบ & จ่าหน้าพัสดุ
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function preparePack(index) {
+      const order = orders[index];
+      document.getElementById('pack-orderId').innerText = order.OrderID;
+      document.getElementById('pack-sku').innerText = order.SKU;
+      document.getElementById('pack-product').innerText = order.ProductName;
+      document.getElementById('pack-qty').innerText = order.Qty;
+      document.getElementById('pack-name').innerText = order.CustomerName;
+      document.getElementById('pack-phone').innerText = "โทร: " + order.Phone;
+      document.getElementById('pack-address').innerText = order.Address;
+      document.getElementById('pack-ref').innerText = order.OrderID;
+
+      const area = document.getElementById('packingArea');
+      area.classList.remove('hidden');
+      area.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function exportCSV() {
+      const headers = ["OrderID,Timestamp,CustomerName,Phone,Address,SKU,ProductName,Qty,TotalPrice"];
+      const rows = orders.map(o => `"${o.OrderID}","${o.Timestamp}","${o.CustomerName}","${o.Phone}","${o.Address}","${o.SKU}","${o.ProductName}",${o.Qty},${o.TotalPrice}`);
+      const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers, ...rows].join("\n");
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("download", "shampoo_orders.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
